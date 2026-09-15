@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- dshjob 品牌图标：圆角方块 + 蓝青弧线光束与粒子端点 -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#3689F5"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="15" ry="15" fill="url(#tile)"/>
+  <path d="M13 45 C 26 45 34 35 35.5 15.5" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M20 51 C 33 51 43 42 46 25" fill="none" stroke="#58BDD9" stroke-width="4" stroke-linecap="round" opacity="0.92"/>
+  <circle cx="35.5" cy="15.5" r="4.5" fill="#FFFFFF"/>
+  <circle cx="46" cy="25" r="3.5" fill="#CFF0F7"/>
+</svg>

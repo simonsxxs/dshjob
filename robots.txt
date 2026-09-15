@@ -1,0 +1,7 @@
+# dshjob.com robots.txt
+# 站点为纯静态页面，允许所有搜索引擎抓取全部内容。
+
+User-agent: *
+Allow: /
+
+Sitemap: https://dshjob.com/sitemap.xml

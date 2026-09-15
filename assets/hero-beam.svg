@@ -1,0 +1,280 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 720" role="img" aria-label="浅雾蓝弧形光束静态背景">
+  <!-- dshjob 首屏静态光束底图：无 JS / 暂停 / 减少动态 / 降级时的完整视觉。 -->
+  <!-- 构图：主束自左下弧线扫向右侧约 50–60% 高度穿出，绕开左侧标题区； -->
+  <!-- 一条次级平行束在下方、一条细束在右侧上行。三条束均为「氛围 / 光晕 / 核心」 -->
+  <!-- 多层 stroke 复合，几何与 assets/hero-motion.js 的 BEAMS 归一化贝塞尔一致。 -->
+  <defs>
+    <!-- 主束沿程渐变：越靠穿出端（右上）越亮 -->
+    <linearGradient id="gM1" x1="-115" y1="691" x2="1613" y2="317" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#58BDD9" stop-opacity=".03"/>
+      <stop offset=".5" stop-color="#58BDD9" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#58BDD9" stop-opacity=".09"/>
+    </linearGradient>
+    <linearGradient id="gM2" x1="-115" y1="691" x2="1613" y2="317" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#58BDD9" stop-opacity=".04"/>
+      <stop offset=".5" stop-color="#58BDD9" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#58BDD9" stop-opacity=".12"/>
+    </linearGradient>
+    <linearGradient id="gM3" x1="-115" y1="691" x2="1613" y2="317" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3689F5" stop-opacity=".13"/>
+      <stop offset=".5" stop-color="#3689F5" stop-opacity=".23"/>
+      <stop offset="1" stop-color="#3689F5" stop-opacity=".32"/>
+    </linearGradient>
+    <linearGradient id="gM4" x1="-115" y1="691" x2="1613" y2="317" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3689F5" stop-opacity=".22"/>
+      <stop offset=".5" stop-color="#3689F5" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#3689F5" stop-opacity=".48"/>
+    </linearGradient>
+    <linearGradient id="gM5" x1="-115" y1="691" x2="1613" y2="317" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563EB" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#2563EB" stop-opacity=".80"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity=".93"/>
+    </linearGradient>
+    <!-- 次级束（下方平行） -->
+    <linearGradient id="gL1" x1="-86" y1="792" x2="1584" y2="446" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#58BDD9" stop-opacity=".02"/>
+      <stop offset=".5" stop-color="#58BDD9" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#58BDD9" stop-opacity=".08"/>
+    </linearGradient>
+    <linearGradient id="gL2" x1="-86" y1="792" x2="1584" y2="446" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3689F5" stop-opacity=".08"/>
+      <stop offset=".5" stop-color="#3689F5" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#3689F5" stop-opacity=".22"/>
+    </linearGradient>
+    <linearGradient id="gL3" x1="-86" y1="792" x2="1584" y2="446" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563EB" stop-opacity=".32"/>
+      <stop offset=".5" stop-color="#2563EB" stop-opacity=".52"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity=".68"/>
+    </linearGradient>
+    <!-- 上行细束（右侧） -->
+    <linearGradient id="gU1" x1="461" y1="778" x2="1613" y2="173" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#58BDD9" stop-opacity=".02"/>
+      <stop offset=".5" stop-color="#58BDD9" stop-opacity=".04"/>
+      <stop offset="1" stop-color="#58BDD9" stop-opacity=".07"/>
+    </linearGradient>
+    <linearGradient id="gU2" x1="461" y1="778" x2="1613" y2="173" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3689F5" stop-opacity=".06"/>
+      <stop offset=".5" stop-color="#3689F5" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#3689F5" stop-opacity=".18"/>
+    </linearGradient>
+    <linearGradient id="gU3" x1="461" y1="778" x2="1613" y2="173" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563EB" stop-opacity=".26"/>
+      <stop offset=".5" stop-color="#2563EB" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity=".56"/>
+    </linearGradient>
+    <!-- 氛围光斑：弧顶一团、示意卡后方一团、左下入口一团 -->
+    <radialGradient id="blobArc">
+      <stop offset="0" stop-color="#C7E2FF" stop-opacity=".34"/>
+      <stop offset=".55" stop-color="#C7E2FF" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#C7E2FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blobCard">
+      <stop offset="0" stop-color="#D6E9FF" stop-opacity=".30"/>
+      <stop offset=".55" stop-color="#D6E9FF" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#D6E9FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blobLow">
+      <stop offset="0" stop-color="#C7E2FF" stop-opacity=".18"/>
+      <stop offset=".55" stop-color="#C7E2FF" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#C7E2FF" stop-opacity="0"/>
+    </radialGradient>
+    <!-- 大粒子贴图：中心微亮近白，向外融入同族浅蓝 -->
+    <radialGradient id="dotBigB">
+      <stop offset="0" stop-color="#F2F8FF" stop-opacity=".95"/>
+      <stop offset=".12" stop-color="#3689F5" stop-opacity=".85"/>
+      <stop offset=".38" stop-color="#3689F5" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#3689F5" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dotBigC">
+      <stop offset="0" stop-color="#F0FAFD" stop-opacity=".95"/>
+      <stop offset=".12" stop-color="#58BDD9" stop-opacity=".85"/>
+      <stop offset=".38" stop-color="#58BDD9" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#58BDD9" stop-opacity="0"/>
+    </radialGradient>
+    <!-- 极淡网格：只做在静态底图里，边缘用遮罩淡出 -->
+    <pattern id="gridPat" width="90" height="90" patternUnits="userSpaceOnUse">
+      <path d="M 90 0 H 0 V 90" fill="none" stroke="#3689F5" stroke-opacity=".045" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="gridFade" cx=".5" cy=".42" r=".75">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".55" stop-color="#fff" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="gridMask"><rect width="1440" height="720" fill="url(#gridFade)"/></mask>
+    <path id="pMain" d="M -115.2 691.2 C 432 518.4 1036.8 662.4 1612.8 316.8"/>
+    <path id="pLow" d="M -86.4 792 C 489.6 633.6 1008 748.8 1584 446.4"/>
+    <path id="pUp" d="M 460.8 777.6 C 892.8 417.6 1238.4 288 1612.8 172.8"/>
+  </defs>
+
+  <!-- 极淡网格（被遮罩压向画面中部，不干扰文字） -->
+  <rect width="1440" height="720" fill="url(#gridPat)" mask="url(#gridMask)"/>
+
+  <!-- 氛围光斑：浅蓝家族大面积柔光，撑起浅底上的空间层次 -->
+  <circle cx="1215" cy="368" r="330" fill="url(#blobArc)"/>
+  <circle cx="1060" cy="285" r="290" fill="url(#blobCard)"/>
+  <circle cx="235" cy="620" r="245" fill="url(#blobLow)"/>
+
+  <!-- 次级束（下方平行，青为主，细而淡） -->
+  <g fill="none" stroke-linecap="round">
+    <use href="#pLow" stroke="url(#gL1)" stroke-width="42"/>
+    <use href="#pLow" stroke="url(#gL2)" stroke-width="11"/>
+    <use href="#pLow" stroke="url(#gL3)" stroke-width="1.8"/>
+  </g>
+  <!-- 上行细束（右侧，最细最淡） -->
+  <g fill="none" stroke-linecap="round">
+    <use href="#pUp" stroke="url(#gU1)" stroke-width="30"/>
+    <use href="#pUp" stroke="url(#gU2)" stroke-width="8"/>
+    <use href="#pUp" stroke="url(#gU3)" stroke-width="1.4"/>
+  </g>
+  <!-- 主光束（三层复合：氛围 → 光晕 → 核心亮线） -->
+  <g fill="none" stroke-linecap="round">
+    <use href="#pMain" stroke="url(#gM1)" stroke-width="64"/>
+    <use href="#pMain" stroke="url(#gM2)" stroke-width="36"/>
+    <use href="#pMain" stroke="url(#gM3)" stroke-width="15"/>
+    <use href="#pMain" stroke="url(#gM4)" stroke-width="6.5"/>
+    <use href="#pMain" stroke="url(#gM5)" stroke-width="2.6"/>
+  </g>
+
+  <!-- 静态光点：沿束高斯散布，三档景深（坐标由种子生成器沿贝塞尔计算） -->
+  <g fill="#3689F5">
+    <circle cx="584.3" cy="596.4" r="1.4" opacity="0.19"/>
+    <circle cx="952.4" cy="577.7" r="1.0" opacity="0.20"/>
+    <circle cx="1109.5" cy="476.7" r="1.0" opacity="0.17"/>
+    <circle cx="875.5" cy="571.5" r="1.1" opacity="0.21"/>
+    <circle cx="1262.0" cy="510.1" r="2.7" opacity="0.49"/>
+    <circle cx="444.9" cy="513.2" r="1.1" opacity="0.14"/>
+    <circle cx="193.5" cy="629.3" r="1.0" opacity="0.15"/>
+    <circle cx="536.6" cy="572.5" r="1.2" opacity="0.15"/>
+    <circle cx="975.0" cy="608.2" r="1.1" opacity="0.23"/>
+    <circle cx="309.1" cy="601.7" r="1.8" opacity="0.34"/>
+    <circle cx="664.2" cy="566.0" r="2.1" opacity="0.43"/>
+    <circle cx="599.8" cy="560.4" r="1.9" opacity="0.50"/>
+    <circle cx="1054.3" cy="496.6" r="1.1" opacity="0.21"/>
+    <circle cx="115.3" cy="670.2" r="1.1" opacity="0.16"/>
+    <circle cx="806.6" cy="620.6" r="1.8" opacity="0.47"/>
+    <circle cx="1402.0" cy="455.6" r="1.0" opacity="0.29"/>
+    <circle cx="269.3" cy="631.0" r="1.4" opacity="0.18"/>
+    <circle cx="198.6" cy="595.2" r="1.3" opacity="0.14"/>
+    <circle cx="606.4" cy="578.9" r="1.1" opacity="0.21"/>
+    <circle cx="972.3" cy="478.1" r="1.4" opacity="0.21"/>
+    <circle cx="1104.2" cy="587.9" r="2.1" opacity="0.54"/>
+    <circle cx="730.1" cy="535.5" r="1.0" opacity="0.23"/>
+    <circle cx="145.5" cy="597.8" r="1.2" opacity="0.14"/>
+    <circle cx="1408.0" cy="322.7" r="1.0" opacity="0.17"/>
+    <circle cx="1079.5" cy="553.3" r="1.4" opacity="0.17"/>
+    <circle cx="901.3" cy="534.1" r="2.8" opacity="0.35"/>
+    <circle cx="1193.5" cy="483.2" r="1.1" opacity="0.28"/>
+    <circle cx="1419.7" cy="515.3" r="2.3" opacity="0.37"/>
+    <circle cx="698.7" cy="658.0" r="1.2" opacity="0.25"/>
+    <circle cx="1302.9" cy="599.5" r="2.6" opacity="0.61"/>
+    <circle cx="1383.5" cy="537.3" r="1.3" opacity="0.25"/>
+    <circle cx="1407.0" cy="465.0" r="1.0" opacity="0.30"/>
+    <circle cx="612.7" cy="641.3" r="1.7" opacity="0.36"/>
+    <circle cx="1391.5" cy="580.3" r="1.3" opacity="0.19"/>
+    <circle cx="1257.4" cy="617.7" r="2.5" opacity="0.48"/>
+    <circle cx="1383.6" cy="565.1" r="2.3" opacity="0.44"/>
+    <circle cx="695.9" cy="697.8" r="1.1" opacity="0.14"/>
+    <circle cx="1039.6" cy="629.1" r="1.1" opacity="0.16"/>
+    <circle cx="985.7" cy="662.3" r="1.8" opacity="0.52"/>
+    <circle cx="1029.2" cy="651.4" r="1.1" opacity="0.23"/>
+    <circle cx="1194.8" cy="611.8" r="2.7" opacity="0.46"/>
+    <circle cx="237.4" cy="696.6" r="1.0" opacity="0.22"/>
+    <circle cx="588.3" cy="650.7" r="1.7" opacity="0.37"/>
+    <circle cx="949.7" cy="645.8" r="2.0" opacity="0.33"/>
+    <circle cx="1377.5" cy="600.7" r="1.2" opacity="0.21"/>
+    <circle cx="723.4" cy="649.0" r="1.2" opacity="0.12"/>
+    <circle cx="241.7" cy="672.0" r="2.3" opacity="0.44"/>
+    <circle cx="1160.9" cy="310.0" r="1.7" opacity="0.51"/>
+    <circle cx="1410.2" cy="217.5" r="1.1" opacity="0.28"/>
+    <circle cx="1145.5" cy="371.4" r="2.1" opacity="0.32"/>
+    <circle cx="618.2" cy="635.9" r="1.3" opacity="0.18"/>
+    <circle cx="974.4" cy="412.6" r="2.6" opacity="0.36"/>
+    <circle cx="1423.2" cy="211.7" r="0.9" opacity="0.23"/>
+    <circle cx="567.1" cy="682.3" r="1.6" opacity="0.43"/>
+    <circle cx="1411.5" cy="248.6" r="2.1" opacity="0.48"/>
+    <circle cx="862.8" cy="448.9" r="1.1" opacity="0.20"/>
+    <circle cx="1062.3" cy="349.5" r="1.6" opacity="0.53"/>
+    <circle cx="983.1" cy="469.3" r="1.4" opacity="0.17"/>
+    <circle cx="752.3" cy="75.2" r="2.1" opacity="0.18"/>
+    <circle cx="1257.5" cy="301.3" r="2.2" opacity="0.15"/>
+    <circle cx="1230.8" cy="317.5" r="1.8" opacity="0.18"/>
+    <circle cx="1108.8" cy="461.4" r="2.1" opacity="0.19"/>
+    <circle cx="780.1" cy="376.4" r="1.3" opacity="0.25"/>
+  </g>
+  <g fill="#58BDD9">
+    <circle cx="624.3" cy="591.5" r="0.9" opacity="0.12"/>
+    <circle cx="675.0" cy="525.5" r="2.8" opacity="0.52"/>
+    <circle cx="689.5" cy="561.2" r="2.8" opacity="0.45"/>
+    <circle cx="1321.8" cy="538.9" r="1.3" opacity="0.16"/>
+    <circle cx="278.2" cy="597.7" r="1.3" opacity="0.21"/>
+    <circle cx="1324.6" cy="407.0" r="1.1" opacity="0.21"/>
+    <circle cx="1136.8" cy="532.5" r="2.1" opacity="0.46"/>
+    <circle cx="405.8" cy="598.9" r="1.3" opacity="0.19"/>
+    <circle cx="718.8" cy="580.4" r="2.3" opacity="0.34"/>
+    <circle cx="29.5" cy="648.7" r="1.2" opacity="0.11"/>
+    <circle cx="232.2" cy="702.2" r="0.9" opacity="0.14"/>
+    <circle cx="1398.7" cy="435.3" r="1.1" opacity="0.23"/>
+    <circle cx="1062.8" cy="567.9" r="1.2" opacity="0.21"/>
+    <circle cx="230.6" cy="569.3" r="1.1" opacity="0.13"/>
+    <circle cx="838.7" cy="517.2" r="1.3" opacity="0.18"/>
+    <circle cx="708.7" cy="574.8" r="2.1" opacity="0.39"/>
+    <circle cx="143.5" cy="636.4" r="2.5" opacity="0.30"/>
+    <circle cx="981.5" cy="454.8" r="1.2" opacity="0.15"/>
+    <circle cx="1416.7" cy="395.9" r="1.2" opacity="0.29"/>
+    <circle cx="918.8" cy="558.4" r="1.2" opacity="0.22"/>
+    <circle cx="49.0" cy="613.7" r="1.2" opacity="0.15"/>
+    <circle cx="1087.2" cy="481.9" r="1.3" opacity="0.15"/>
+    <circle cx="442.9" cy="633.4" r="1.9" opacity="0.50"/>
+    <circle cx="622.6" cy="569.3" r="1.1" opacity="0.17"/>
+    <circle cx="1165.7" cy="416.4" r="2.4" opacity="0.40"/>
+    <circle cx="861.3" cy="598.9" r="1.4" opacity="0.25"/>
+    <circle cx="1047.8" cy="628.7" r="1.2" opacity="0.21"/>
+    <circle cx="1092.6" cy="654.0" r="1.1" opacity="0.15"/>
+    <circle cx="367.5" cy="669.9" r="2.8" opacity="0.31"/>
+    <circle cx="723.9" cy="706.8" r="1.0" opacity="0.16"/>
+    <circle cx="1374.4" cy="599.8" r="1.3" opacity="0.21"/>
+    <circle cx="328.3" cy="653.0" r="2.4" opacity="0.48"/>
+    <circle cx="1329.8" cy="506.6" r="2.2" opacity="0.43"/>
+    <circle cx="235.0" cy="698.8" r="0.9" opacity="0.20"/>
+    <circle cx="1418.1" cy="465.9" r="2.1" opacity="0.62"/>
+    <circle cx="1257.0" cy="619.1" r="2.2" opacity="0.37"/>
+    <circle cx="428.7" cy="686.2" r="1.1" opacity="0.16"/>
+    <circle cx="1387.3" cy="248.4" r="2.1" opacity="0.49"/>
+    <circle cx="642.5" cy="614.2" r="1.1" opacity="0.12"/>
+    <circle cx="878.2" cy="489.8" r="1.0" opacity="0.16"/>
+    <circle cx="1277.7" cy="251.5" r="1.2" opacity="0.25"/>
+    <circle cx="1178.5" cy="340.5" r="1.0" opacity="0.24"/>
+    <circle cx="905.6" cy="445.7" r="1.0" opacity="0.17"/>
+    <circle cx="1027.8" cy="421.1" r="1.3" opacity="0.11"/>
+    <circle cx="683.7" cy="644.1" r="1.3" opacity="0.16"/>
+    <circle cx="629.7" cy="630.8" r="1.3" opacity="0.13"/>
+    <circle cx="897.9" cy="469.0" r="2.8" opacity="0.37"/>
+    <circle cx="633.9" cy="595.8" r="1.2" opacity="0.15"/>
+    <circle cx="1184.8" cy="367.8" r="1.1" opacity="0.21"/>
+    <circle cx="1038.5" cy="465.9" r="1.7" opacity="0.51"/>
+    <circle cx="1140.1" cy="202.0" r="2.3" opacity="0.24"/>
+    <circle cx="1079.1" cy="472.8" r="1.3" opacity="0.19"/>
+    <circle cx="1138.9" cy="55.8" r="1.2" opacity="0.24"/>
+    <circle cx="973.5" cy="469.5" r="1.6" opacity="0.23"/>
+    <circle cx="1196.8" cy="105.9" r="2.0" opacity="0.17"/>
+    <circle cx="1181.3" cy="422.4" r="1.2" opacity="0.24"/>
+    <circle cx="1386.7" cy="371.3" r="2.2" opacity="0.14"/>
+  </g>
+  <!-- 大粒子（径向渐变辉光，中心一点近白高光） -->
+  <g>
+    <circle cx="1235.9" cy="507.7" r="8" fill="url(#dotBigB)"/>
+    <circle cx="1217.1" cy="321.7" r="8.5" fill="url(#dotBigB)"/>
+    <circle cx="530.1" cy="542.6" r="10" fill="url(#dotBigC)"/>
+    <circle cx="123.5" cy="614.1" r="10.5" fill="url(#dotBigC)"/>
+    <circle cx="99.8" cy="702.3" r="10" fill="url(#dotBigC)"/>
+    <circle cx="1245.6" cy="591.6" r="7.5" fill="url(#dotBigC)"/>
+    <circle cx="903.8" cy="456.5" r="6.5" fill="url(#dotBigC)"/>
+  </g>
+  <!-- 核心亮线上的点缀火花（贴线、靠穿出端） -->
+  <g fill="#2563EB">
+    <circle cx="1264.4" cy="471.9" r="2.6" opacity="0.85"/>
+    <circle cx="1386.9" cy="428.5" r="3" opacity="0.9"/>
+    <circle cx="1421.8" cy="414.1" r="2.4" opacity="0.8"/>
+    <circle cx="1413" cy="238" r="2.2" opacity="0.75"/>
+  </g>
+</svg>

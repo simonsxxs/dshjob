@@ -1,0 +1,136 @@
+# ============================================================================
+# dshjob.com 官网发布工作流（GitHub Actions 人工触发 → Cloudflare Pages 直传）
+# ============================================================================
+#
+# ⚠️  重要：本工作流仅供审阅。把它保存进仓库不构成发布授权；
+#     每次运行前必须另行获得用户针对目标提交的明确发布授权（批准发布），
+#     口令确认只防误触，不代替授权。
+#
+# 设计依据：openspec/changes/dshjob-static-site-v1/design.md 第 7 节六条要求：
+#   1. 仅 workflow_dispatch 手动触发；无 push / PR / schedule 发布触发器；
+#   2. 固定仓库 simonsxxs/dshjob、生产分支 main、Pages 项目 dshjob，
+#      不接受任何输入覆盖目标仓库 / 分支 / 项目；
+#   3. 校验输入格式与提交可取得且属于远程 main；checkout 后 HEAD 必须等于
+#      输入 SHA（祖先关系检查不构成批准，批准依据是用户的明确授权）；
+#   4. 静态检查（scripts/check-site.py）通过后，按白名单打包
+#      （scripts/package-site.py）再上传；无需 npm 构建网站；
+#   5. 仅读取 Secrets 的 CLOUDFLARE_API_TOKEN 与 CLOUDFLARE_ACCOUNT_ID，
+#      绝不回显内容；
+#   6. 记录获批 SHA、Actions run、部署 URL，正式域名另行人工核对。
+#
+# Gitee 同步与安装包上传是另外的明确动作，不在本工作流内。
+# ============================================================================
+
+name: release-pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: '要发布的提交 SHA（完整 40 位十六进制，必须属于 origin/main）'
+        required: true
+        type: string
+      confirm:
+        description: '发布确认口令（必须精确填写：RELEASE dshjob.com）'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# 同一时间只允许一个发布任务，避免交叉覆盖
+concurrency:
+  group: release-pages
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: 校验并发布 dshjob.com
+    # 固定仓库：防止在 fork 等其他仓库中误运行
+    if: github.repository == 'simonsxxs/dshjob'
+    runs-on: ubuntu-latest
+    outputs:
+      commit-sha: ${{ steps.publish-meta.outputs.commit-sha }}
+      run-id: ${{ steps.publish-meta.outputs.run-id }}
+      deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+    env:
+      # 经 env 传入脚本，避免把输入直接内插进 shell 造成注入
+      COMMIT_SHA: ${{ inputs.commit_sha }}
+      CONFIRM: ${{ inputs.confirm }}
+    steps:
+      - name: 1/8 校验发布输入（SHA 格式与确认口令）
+        run: |
+          if [[ ! "$COMMIT_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "::error::commit_sha 必须是完整 40 位十六进制 SHA（当前值：$COMMIT_SHA）"
+            exit 1
+          fi
+          if [[ "$CONFIRM" != "RELEASE dshjob.com" ]]; then
+            echo "::error::confirm 必须精确等于「RELEASE dshjob.com」（注意空格、大小写与域名）"
+            exit 1
+          fi
+          # 统一转小写供后续 git 命令使用
+          echo "COMMIT_SHA=$(printf '%s' "$COMMIT_SHA" | tr 'A-F' 'a-f')" >> "$GITHUB_ENV"
+          echo "输入校验通过。"
+
+      - name: 2/8 检出仓库完整历史
+        # actions/checkout 版本在实施时（2026-09-15）固定为 v4；升级需重新审阅
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 3/8 校验 SHA 存在于远程 origin/main
+        run: |
+          git fetch origin main
+          if ! git cat-file -e "${COMMIT_SHA}^{commit}"; then
+            echo "::error::提交 ${COMMIT_SHA} 在仓库中不存在"
+            exit 1
+          fi
+          if git merge-base --is-ancestor "$COMMIT_SHA" origin/main; then
+            echo "确认：${COMMIT_SHA} 属于远程 origin/main。"
+          else
+            echo "::error::${COMMIT_SHA} 不在远程 origin/main 的历史中，拒绝发布"
+            exit 1
+          fi
+
+      - name: 4/8 检出获批 SHA 并核对 HEAD
+        run: |
+          git checkout --detach "$COMMIT_SHA"
+          if [[ "$(git rev-parse HEAD)" != "$COMMIT_SHA" ]]; then
+            echo "::error::检出后 HEAD 与输入 SHA 不一致"
+            exit 1
+          fi
+          echo "已检出获批提交：$COMMIT_SHA"
+
+      - name: 5/8 静态检查（scripts/check-site.py）
+        run: python3 scripts/check-site.py
+
+      - name: 6/8 白名单打包（scripts/package-site.py）
+        run: python3 scripts/package-site.py --out site-staging
+
+      # wrangler-action 版本在实施时（2026-09-15）固定为 v3 大版本标签；
+      # 升级必须重新审阅整条发布链路，不允许随构建自动漂移。
+      # 仅使用两个指定 Secrets，任何日志不得输出其内容。
+      # 命令先列出账号下的 Pages 项目并确认存在 dshjob（归属核对），
+      # 核对不通过时 && 短路，部署不会执行（fail-closed）。
+      - name: 7/8 核对 Pages 项目归属并上传
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project list | grep -q dshjob && wrangler pages deploy site-staging --project-name=dshjob --branch=main
+
+      - name: 8/8 记录发布结果
+        id: publish-meta
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          echo "commit-sha=$COMMIT_SHA" >> "$GITHUB_OUTPUT"
+          echo "run-id=$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
+          {
+            echo "### 发布完成（正式域名需另行人工核对）"
+            echo "- 获批提交：$COMMIT_SHA"
+            echo "- Actions Run：$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Pages 部署地址：$DEPLOY_URL（子域名即本次部署的不可变 URL）"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "发布完成，部署地址：$DEPLOY_URL"

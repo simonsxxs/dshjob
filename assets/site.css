@@ -1,0 +1,2161 @@
+/* ==========================================================================
+   dshjob.com 共享样式表（assets/site.css）
+   --------------------------------------------------------------------------
+   - 由 index.html 与 guide.html 共同引用；404.html 使用内联样式，不链接本文件。
+   - 视觉依据：本项目设计文档第 3 节（权威）与已认可的浅雾蓝原型 v2。
+   - 约束：纯手写 CSS，无预处理、无框架、无远程字体；
+     所有色值与尺寸集中在 :root 自定义属性中管理。
+   - 断点（移动优先）：
+       基础      < 640px    手机
+       ≥ 640px              平板（两列网格、32px 侧距）
+       ≥ 1100px             桌面（四列网格、首屏 55:45 两列、40px 侧距）
+   - 无 JS 降级：导航原生可见、演示面板纵向全展开、复制按钮不显示；
+     html.js 由 site.js 在初始化后添加到 <html>。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   一、设计变量（色值 / 尺寸 / 动效速度）
+   -------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  /* —— 色板（设计文档第 3 节）—— */
+  --bg: #F2F7FC;               /* 全页底 */
+  --hero-start: #E9F3FF;       /* 首屏渐变起点 */
+  --hero-end: #F5FAFF;         /* 首屏渐变终点 */
+  --card-bg: #FFFFFF;          /* 内容卡底 */
+  --card-border: #C8DAEB;      /* 内容卡细边 */
+  --text: #16324F;             /* 标题 / 正文 */
+  --secondary: #516579;        /* 次要说明 */
+  --primary: #2563EB;          /* 主按钮 / 链接 */
+  --primary-hover: #1D4ED8;    /* 主按钮悬停 */
+  --beam-blue: #3689F5;        /* 粒子 / 光束 蓝 */
+  --beam-cyan: #58BDD9;        /* 粒子 / 光束 青 */
+  --contact-bg: #E7F1FF;       /* 联系区域底 */
+  --tint: #E9F3FF;             /* 悬停浅蓝底 */
+  --hairline: #DFEBF6;         /* 表格 / 分隔细线 */
+
+  /* —— 状态徽标（全部浅底深字，保证对比度）—— */
+  --st-pending-bg: #FFF6D9;
+  --st-pending-bd: #EAD9A8;
+  --st-pending-tx: #7A5B00;    /* 准备中：黄蓝系 */
+  --st-ready-bg: #E3F6E8;
+  --st-ready-bd: #BCE3C7;
+  --st-ready-tx: #166534;      /* 可获取：绿系 */
+  --st-repo-bg: #E4EFFB;
+  --st-repo-bd: #BBD6F0;
+  --st-repo-tx: #1D4ED8;       /* 可看仓库：蓝系 */
+  --st-off-bg: #EDF1F5;
+  --st-off-bd: #D3DCE4;
+  --st-off-tx: #516579;        /* 当前不可用：灰系 */
+
+  /* —— 字体 —— */
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* —— 布局尺寸 —— */
+  --container-max: 1184px;     /* 内容最大宽 */
+  --gutter: 20px;              /* 页面两侧距：手机 20 */
+  --nav-h: 64px;               /* 导航高：手机约 64 */
+  --section-py: 36px;          /* 区块上下间距：手机（对齐原型 v2 的紧凑节奏） */
+  --card-pad: 20px;            /* 卡内边距：手机 20 */
+  --grid-gap: 20px;            /* 网格间隙 */
+  --card-radius: 20px;         /* 卡圆角 */
+  --btn-radius: 12px;          /* 按钮圆角 */
+  --lead-fs: 16px;             /* 首屏导语字号 16–18 */
+
+  /* —— 阴影与动效 —— */
+  --card-shadow: 0 1px 2px rgba(22, 50, 79, 0.05), 0 8px 24px rgba(22, 50, 79, 0.06);
+  --card-shadow-lift: 0 2px 4px rgba(22, 50, 79, 0.06), 0 16px 40px rgba(22, 50, 79, 0.10);
+  --speed: 200ms;              /* 交互反馈 180–220ms */
+}
+
+/* 平板（≥640px）：侧距 32、卡距 24、卡内边距 24 */
+@media (min-width: 640px) {
+  :root {
+    --gutter: 32px;
+    --section-py: 44px;
+    --card-pad: 24px;
+    --grid-gap: 24px;
+    --lead-fs: 17px;
+  }
+}
+
+/* 桌面（≥1100px）：侧距至少 40、导航 72 */
+@media (min-width: 1100px) {
+  :root {
+    --gutter: 40px;
+    --nav-h: 72px;
+    --section-py: 40px;
+    --lead-fs: 18px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   二、基础与重置
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth; /* 锚点平滑滚动；减少动态时在文末统一关闭 */
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;           /* 正文 16–18px */
+  line-height: 1.65;         /* 行距 1.65 */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, ul, ol, dl, figure, blockquote {
+  margin: 0; /* 间距统一由组件与上下文规则提供 */
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+strong, b {
+  font-weight: 600;
+}
+
+code, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--tint);
+  border: 1px solid #D6E6F7;
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+::selection {
+  background: #CFE6FA;
+  color: var(--text);
+}
+
+/* 无障碍：JS 与原生 hidden 属性的兜底，防止组件 display 覆盖隐藏 */
+[hidden] {
+  display: none !important;
+}
+
+/* 键盘焦点：明显焦点环（蓝色描边 + 青色光晕），触屏点击不出现 */
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(88, 189, 217, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   三、通用工具：容器 / 链接 / 跳转链接
+   -------------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: calc(var(--container-max) + var(--gutter) * 2); /* 内容列精确 1184px */
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* 正文链接：浅蓝下划线，悬停加深 */
+a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: rgba(37, 99, 235, 0.35);
+  text-underline-offset: 3px;
+  transition: color var(--speed) ease, text-decoration-color var(--speed) ease;
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration-color: currentColor;
+}
+
+/* 跳转链接：视觉隐藏，聚焦（Tab）时出现 */
+.skip-link {
+  position: fixed;
+  top: -64px;
+  left: 16px;
+  z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--card-bg);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top var(--speed) ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   四、按钮与基础控件（触控目标 ≥ 44px）
+   -------------------------------------------------------------------------- */
+/* 教程页使用 .button / .button-primary / .button-secondary 命名，与 .btn 系列共享样式 */
+.btn,
+.button,
+.menu-toggle,
+.demo-tab,
+.copy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 1px solid transparent;
+  border-radius: var(--btn-radius);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--speed) ease,
+    border-color var(--speed) ease,
+    color var(--speed) ease,
+    box-shadow var(--speed) ease,
+    transform var(--speed) ease;
+}
+
+.btn:disabled,
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* 主按钮：蓝底白字 + 柔和蓝投影与顶缘内高光，悬停加深并轻微抬升（对比度约 5.17:1） */
+.btn-primary,
+.button-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 6px 16px rgba(37, 99, 235, 0.25);
+}
+
+.btn-primary:hover,
+.button-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: #FFFFFF;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 24px rgba(29, 78, 216, 0.32);
+  transform: translateY(-1px);
+}
+
+/* 键盘聚焦时以焦点环为主，避免按钮投影压掉全局青色光晕 */
+.btn-primary:focus-visible,
+.button-primary:focus-visible {
+  box-shadow: 0 0 0 5px rgba(88, 189, 217, 0.35);
+}
+
+/* 次按钮：白底蓝字蓝边 */
+.btn-secondary,
+.button-secondary {
+  background: var(--card-bg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-secondary:hover,
+.button-secondary:hover {
+  background: var(--tint);
+  border-color: var(--primary-hover);
+  color: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(54, 137, 245, 0.14);
+}
+
+/* 幽灵按钮：无边无底，悬停浅蓝 */
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary-hover);
+}
+
+/* --------------------------------------------------------------------------
+   五、头部与导航（粘性）
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  min-height: var(--nav-h);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* 品牌图标：与 favicon 同源的蓝底光束标（原型 v2 页眉样式） */
+.brand-logo {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.brand svg,
+.brand img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+/* 导航链接：无 JS 时原生可见（可换行），宽屏水平排列 */
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+}
+
+.nav-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--speed) ease, background-color var(--speed) ease;
+}
+
+.nav-links a:hover {
+  color: var(--primary-hover);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 菜单按钮：默认隐藏，仅在 JS 就绪且窄屏出现 */
+.menu-toggle {
+  display: none;
+  min-width: 44px;
+  padding: 10px 14px;
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.menu-toggle[aria-expanded="true"] {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* —— 移动菜单（<1100px 且 JS 就绪）：默认收起，nav-open 时下拉展开 —— */
+@media (max-width: 1099.98px) {
+  .js .menu-toggle {
+    display: inline-flex;
+  }
+
+  .js .nav-links {
+    display: none;
+  }
+
+  .js .site-header.nav-open {
+    box-shadow: 0 12px 32px rgba(22, 50, 79, 0.12);
+  }
+
+  .js .site-header.nav-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 10px var(--gutter) 16px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    box-shadow: 0 16px 32px rgba(22, 50, 79, 0.10);
+  }
+
+  .js .site-header.nav-open .nav-links a {
+    min-height: 48px;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 639.98px) {
+  /* 品牌名一行放下，避免两行挤压头部 */
+  .brand {
+    font-size: 16px;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .header-actions {
+    margin-left: 4px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   六、首屏（55:45 两列；光束动效层为 body 级固定全页背景，见下）
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  /* 首屏渐变已移到 .hero-motion-layer：动效层固定全页，滚动时各区域共享同一浅雾蓝底 */
+}
+
+/* 动效层：固定全页装饰背景。静态 SVG 光束与 Canvas 粒子光束，
+   只作装饰、不响应指针、不承载内容；z-index:-1 落在所有正文之后。
+   data-state="running" 时 Canvas 完整绘制光束（SVG 淡出）；
+   其余状态（static / 暂停 / 失败 / 减少动态）清空 Canvas，SVG 兜底可见。 */
+.hero-motion-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--hero-start) 0%, var(--hero-end) 100%);
+}
+
+.hero-beam,
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-beam {
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 300ms ease; /* 与 Canvas 交叉淡入淡出，避免硬切换 */
+}
+
+.hero-motion-layer[data-state="running"] .hero-beam {
+  opacity: 0;
+}
+
+.hero-canvas {
+  z-index: 1; /* 粒子叠放在静态光束之上 */
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+  padding-block: 40px;
+}
+
+@media (min-width: 640px) {
+  .hero-inner {
+    gap: 48px;
+    padding-block: 48px;
+  }
+}
+
+/* 桌面：首屏左右两列约 55:45；列距微调加大，给右列示意卡更多呼吸 */
+@media (min-width: 1100px) {
+  .hero-inner {
+    grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+    gap: 64px;
+    padding-block: 56px 48px;
+  }
+}
+
+/* 免费公开徽标：白到浅蓝的极淡渐变底 + 细描边 + 品牌蓝圆点（对比度约 5.98:1） */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 7px 16px;
+  background: linear-gradient(180deg, #FFFFFF 0%, var(--tint) 100%);
+  border: 1px solid #C7E2FF;
+  border-radius: 999px;
+  color: var(--primary-hover);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 2px 6px rgba(54, 137, 245, 0.10);
+}
+
+/* 徽标前置小圆点：品牌蓝 + 淡蓝光晕 */
+.hero-badge::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--beam-blue);
+  box-shadow: 0 0 0 3px rgba(54, 137, 245, 0.15);
+}
+
+.hero-copy h1 {
+  margin-bottom: 18px;
+  font-size: 36px;       /* 手机 36 */
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* 标题后半句品牌蓝（原型 v2：「从这里开始。」） */
+.hero-hl {
+  color: var(--primary);
+}
+
+/* 说明段：主说明（正文色、大 1px、半粗）
+   选择器从 .hero-copy p 收窄为 .hero-text，避免层叠压过 .hero-badge 的徽标样式 */
+.hero-text {
+  max-width: 34em;
+  color: var(--secondary);
+  font-size: var(--lead-fs);
+  line-height: 1.7;
+}
+
+.hero-lede {
+  color: var(--text);
+  font-size: calc(var(--lead-fs) + 1px);
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .hero-copy h1 {
+    font-size: 44px;     /* 平板 44 */
+    line-height: 1.15;
+  }
+}
+
+@media (min-width: 1100px) {
+  .hero-copy h1 {
+    font-size: 56px;     /* 桌面 56 / 1.15 */
+    line-height: 1.15;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+/* 手机：主次按钮整行；≥640px 恢复自然宽度 */
+.hero-actions .btn {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 640px) {
+  .hero-actions .btn {
+    flex: 0 1 auto;
+  }
+}
+
+/* 首屏右侧：只读「需求 → 结果」示意卡；掺蓝氛围投影让白卡与浅蓝底互相呼应 */
+.demand-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow:
+    0 18px 40px -18px rgba(54, 137, 245, 0.20),
+    0 6px 18px rgba(22, 50, 79, 0.06);
+  padding: var(--card-pad);
+}
+
+/* 顶缘一条极淡蓝高光：避开圆角，中段最亮、向两端淡出 */
+.demand-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(54, 137, 245, 0.35) 50%, transparent 100%);
+}
+
+/* 桌面：示意卡内边距略加大，右列视觉重量随之略增 */
+@media (min-width: 1100px) {
+  .demand-card {
+    padding: 28px;
+  }
+}
+
+.demand-card > * + * {
+  margin-top: 12px;
+}
+
+/* 示意卡标题行：左侧卡名（品牌蓝小竖条）、右侧「演示数据」胶囊 */
+.assistant-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.assistant-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.assistant-head .demo-note {
+  margin-bottom: 0; /* 标题行内的胶囊不再预留段距 */
+}
+
+/* 用户需求引用：浅蓝底 + 蓝左边 + 浅蓝细描边（“输入”一侧的层次） */
+.demand-quote {
+  padding: 12px 14px;
+  background: var(--tint);
+  border: 1px solid #C7E2FF;
+  border-left: 3px solid var(--primary);
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.60);
+}
+
+/* 岗位结果列表：图标 + 职位信息 + 状态胶囊（与原型 v2「我的求职助手」一致） */
+.assist-jobs {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assist-job {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #F5FAFF;
+  border: 1px solid #DCE9F6;
+  border-radius: 14px;
+}
+
+.assist-ico {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--tint);
+  color: var(--primary);
+}
+
+.assist-ico svg {
+  width: 18px;
+  height: 18px;
+}
+
+.assist-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.assist-info strong {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.assist-info small {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--secondary);
+}
+
+.assist-status {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: var(--st-repo-bg);
+  border: 1px solid var(--st-repo-bd);
+  border-radius: 999px;
+  color: var(--st-repo-tx);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* 卡底链接：进入演示区看完整流程（触控目标 ≥ 44px） */
+.assist-more {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.assist-more:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   七、区块通用（标题、间距、锚点偏移）
+   -------------------------------------------------------------------------- */
+.section {
+  padding-block: var(--section-py);
+}
+
+.section-head {
+  max-width: 720px;
+  margin: 0 0 36px;
+  text-align: left;          /* 原型 v2：栏目编号与标题左对齐 */
+}
+
+.section-title,
+.section-head h2 {
+  font-size: 28px;         /* 手机 28 */
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.01em;  /* 轻微字距，标题更舒展 */
+}
+
+.section-sub,
+.section-head > p {
+  margin-top: 12px;
+  color: var(--secondary);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* 区块序号标签（如「01 / 能做什么」，原型 v2 的栏目编号） */
+.section-head > .section-kicker {
+  margin: 0 0 10px;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+@media (min-width: 640px) {
+  .section-head {
+    margin-bottom: 44px;
+  }
+
+  .section-title,
+  .section-head h2 {
+    font-size: 32px;       /* 桌面 / 平板 32 */
+  }
+}
+
+/* 锚点定位预留粘性导航高度 + 16px（首页与教程页章节统一处理） */
+#features,
+#demo,
+#start,
+#downloads,
+#faq,
+#contact,
+#software,
+#agent,
+#skill,
+#mcp,
+#help {
+  scroll-margin-top: calc(var(--nav-h) + 16px);
+}
+
+/* --------------------------------------------------------------------------
+   八、卡片网格与卡片（四列 / 两列 / 单列）
+   -------------------------------------------------------------------------- */
+.feature-grid,
+.card-grid,
+.card-grid-2,
+.card-grid-4,
+.steps {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);   /* <640px：单列 */
+  gap: var(--grid-gap);
+}
+
+/* 640–1099px：两列 */
+@media (min-width: 640px) {
+  .feature-grid,
+  .card-grid-2,
+  .card-grid-4,
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ≥1100px：功能卡与四入口恢复四列 */
+@media (min-width: 1100px) {
+  .feature-grid,
+  .card-grid-4,
+  .steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* 卡片公共外观 */
+.feature-card,
+.mode-card,
+.step,
+.demo-panel,
+.contact-card,
+.qr-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.feature-card,
+.mode-card,
+.step,
+.contact-card {
+  padding: var(--card-pad);
+}
+
+.feature-card,
+.mode-card,
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.feature-card h3,
+.step h3 {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.mode-card h3 {
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.feature-card p,
+.mode-card p,
+.step p {
+  color: var(--secondary);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.feature-card > svg,
+.feature-card > img {
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+
+/* 功能卡图标：浅蓝圆角底 + 品牌蓝线条（原型 v2 风格） */
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--tint);
+  color: var(--primary);
+}
+
+.feature-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* 指针设备：方式卡 / 功能卡悬停轻微上浮；触屏不触发，减少动态时过渡已被全局关闭 */
+@media (hover: hover) {
+  .mode-card,
+  .feature-card {
+    transition: transform var(--speed) ease, box-shadow var(--speed) ease, border-color var(--speed) ease;
+  }
+
+  .mode-card:hover,
+  .feature-card:hover {
+    transform: translateY(-2px);
+    border-color: #AFCAE4;
+    box-shadow: var(--card-shadow-lift);
+  }
+}
+
+/* 方式卡头部：图标 + 名称（原型 v2 的卡头样式） */
+.mode-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mode-ico {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--tint);
+  color: var(--primary);
+}
+
+.mode-ico svg {
+  width: 20px;
+  height: 20px;
+}
+
+.mode-head h3 {
+  margin: 0;
+}
+
+/* 方式卡一句话说明与状态徽标行（原型 v2 精简卡面 + Spec 要求的状态展示） */
+.mode-desc {
+  margin: 0;
+}
+
+.mode-status {
+  margin: 0;
+}
+
+/* 方式卡底部操作区：仓库按钮组在上、教程链接在下；贴底对齐各卡（原型 v2 左对齐） */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.card-actions .btn {
+  margin-top: 0;              /* 间距交给 flex gap */
+}
+
+/* 仓库链接容器：教程页内也用于盛放按钮组 */
+.repo-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+/* 首页方式卡内的仓库按钮：胶囊按钮两枚并排（触控目标 ≥ 44px） */
+.card-actions .repo-links {
+  flex-wrap: nowrap;        /* 两枚胶囊并排（原型 v2），窄卡也不换行 */
+  align-self: stretch;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.repo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1 1 0;
+  min-height: 44px;
+  padding: 8px 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color var(--speed) ease, color var(--speed) ease;
+}
+
+.repo-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary-hover);
+}
+
+.repo-btn .repo-gh {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* Gitee 红 G 小圆标（文字标，非官方 Logo 素材） */
+.repo-gitee {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #C71D23;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 卡内「查看教程 →」文字链（触控目标 ≥ 44px） */
+.tut-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.tut-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* 步骤编号：品牌蓝描边圆徽（原型 v2 的 01–04 圆形序号） */
+.step .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--primary);
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 四步为无卡片流程（原型 v2）：透明底、无描边投影，内容贴左 */
+.steps .step {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* 桌面四列：步骤之间的虚线引导 + 箭头（纯装饰，不影响阅读与点击） */
+@media (min-width: 1100px) {
+  .step {
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 22px;                       /* 圆徽（44px）垂直中线 */
+    left: 58px;
+    right: calc(-1 * var(--grid-gap) + 22px);
+    border-top: 2px dashed #BFDBF7;
+  }
+
+  .step:not(:last-child)::before {
+    content: "→";
+    position: absolute;
+    top: 22px;
+    right: calc(-1 * var(--grid-gap) / 2);
+    transform: translate(50%, -50%);
+    color: #9CC2EC;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+  }
+}
+
+/* “能做什么”区块末尾的居中说明 */
+.features-note {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* --------------------------------------------------------------------------
+   九、方式卡状态徽标（浅底深字，全部满足对比度）
+   -------------------------------------------------------------------------- */
+/* 状态徽标：小胶囊 + 状态圆点 */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.status-badge::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* 徽标配色由方式卡的 data-status 属性驱动（准备中：黄系 / 可看仓库：蓝系） */
+[data-status="pending"] .status-badge {
+  background: var(--st-pending-bg);
+  border-color: var(--st-pending-bd);
+  color: var(--st-pending-tx);
+}
+
+[data-status="repository-only"] .status-badge {
+  background: var(--st-repo-bg);
+  border-color: var(--st-repo-bd);
+  color: var(--st-repo-tx);
+}
+
+/* 已发布：绿系徽标 */
+[data-status="ready"] .status-badge {
+  background: var(--st-ready-bg);
+  border-color: var(--st-ready-bd);
+  color: var(--st-ready-tx);
+}
+
+/* --------------------------------------------------------------------------
+   十、演示区（标签页 + 面板 + “演示数据”标签）
+   -------------------------------------------------------------------------- */
+/* 标签行：左侧切换标签、右侧「演示数据 · 非实时任务」徽标（原型 v2 布局） */
+.demo-tabs-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.demo-tabs-head .demo-note {
+  margin-bottom: 0;
+}
+
+.tab-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.demo-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 20px;
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  border-radius: 999px;
+  color: var(--secondary);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.demo-tab svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.demo-tab:hover {
+  color: var(--primary-hover);
+  border-color: var(--primary);
+}
+
+/* 无 JS 时标签仅作静态说明，不暗示可点击 */
+html:not(.js) .demo-tab {
+  cursor: default;
+}
+
+/* JS 增强后：当前选中标签为浅蓝胶囊 + 蓝色下划指示条（原型 v2 样式） */
+.js .demo-tab[aria-selected="true"] {
+  position: relative;
+  background: #E3EFFC;
+  border-color: #C7DCFA;
+  color: var(--primary-hover);
+  font-weight: 600;
+}
+
+.js .demo-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -7px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--primary);
+}
+
+/* 面板：无 JS 时纵向全展开；JS 后由 hidden 属性控制显隐 */
+.demo-panel {
+  padding: var(--card-pad);
+}
+
+.demo-panel + .demo-panel {
+  margin-top: var(--grid-gap);
+}
+
+/* “演示数据”标签：虚线描边小胶囊 */
+.demo-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 4px 12px;
+  background: var(--bg);
+  border: 1px dashed var(--card-border);
+  border-radius: 999px;
+  color: var(--secondary);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* 演示面板与教程正文内的段落、列表与表格 */
+.demo-panel p,
+.demo-panel ul,
+.demo-panel ol,
+.guide-body p,
+.guide-body ul,
+.guide-body ol,
+.contact-card p {
+  margin-bottom: 14px;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.demo-panel ul,
+.demo-panel ol,
+.guide-body ul,
+.guide-body ol {
+  padding-left: 1.25em;
+}
+
+.demo-panel li + li,
+.guide-body li + li {
+  margin-top: 6px;
+}
+
+.demo-panel table,
+.guide-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.demo-panel th,
+.demo-panel td,
+.guide-body th,
+.guide-body td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: top;
+}
+
+.demo-panel thead th,
+.guide-body thead th {
+  color: var(--secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.demo-panel tbody tr:last-child td,
+.guide-body tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* 面板小标题：与其他卡片 h3 字号统一 */
+.demo-panel h3 {
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+/* 干跑提示语引用块：浅蓝底 + 蓝左边，可整段选中复制 */
+.demo-prompt {
+  padding: 14px 16px;
+  background: var(--tint);
+  border-left: 4px solid var(--primary);
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  user-select: text;
+  overflow-wrap: break-word;
+}
+
+/* 提示语下方的小字说明 */
+.demo-panel .demo-tip {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--secondary);
+}
+
+/* 演示列表：去项目符号，间距交给 grid gap */
+.demo-panel .progress-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.demo-panel .progress-list li + li {
+  margin-top: 0;              /* 覆盖正文列表的 6px 条目距 */
+}
+
+/* 岗位表演示（原型 v2 的表格视图）：窄屏可横向滑动，不挤压列内容 */
+.demo-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+}
+
+.demo-table {
+  min-width: 680px;
+}
+
+.demo-table-wrap table {
+  margin: 0;
+}
+
+.demo-table td small {
+  display: block;
+  margin-top: 2px;
+  color: var(--secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* 表头浅蓝底条（原型 v2）：两端随表格圆角 */
+.demo-table thead th {
+  background: #EAF3FE;
+}
+
+.demo-table thead th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.demo-table thead th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+/* 行尾详情箭头 */
+.demo-table .job-chevron {
+  color: var(--primary);
+  font-size: 18px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* 表格内的岗位状态徽标：浅底深字 */
+.demo-table .job-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: var(--st-repo-bg);
+  border: 1px solid var(--st-repo-bd);
+  border-radius: 999px;
+  color: var(--st-repo-tx);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* 进度演示：汇总行加粗 */
+.demo-panel .progress-summary {
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* 进度条目：左侧小标签 + 说明 */
+.progress-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #F5FAFF;
+  border: 1px solid #DCE9F6;
+  border-radius: 14px;
+}
+
+.progress-item p {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--secondary);
+}
+
+.progress-tag {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 2px;
+  padding: 3px 10px;
+  background: var(--st-repo-bg);
+  border: 1px solid var(--st-repo-bd);
+  border-radius: 999px;
+  color: var(--st-repo-tx);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   十一、FAQ（原生 details / summary，自定义箭头）
+   -------------------------------------------------------------------------- */
+.faq {
+  display: grid;
+  gap: 12px;
+  max-width: 800px;
+  margin-inline: auto;
+}
+
+.faq-item {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  transition: border-color var(--speed) ease;
+}
+
+.faq-item[open] {
+  border-color: #AFCAE4;
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 16px 20px;
+  list-style: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+/* 问题前置问号圆标（原型 v2 的 FAQ 行样式） */
+.faq-item summary::before {
+  content: "?";
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 自定义箭头：展开时旋转 */
+.faq-item summary::after {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-left: auto;
+  border-right: 2px solid var(--secondary);
+  border-bottom: 2px solid var(--secondary);
+  transform: rotate(45deg);             /* 收起：向下箭头 */
+  transition: transform var(--speed) ease;
+}
+
+.faq-item[open] summary::after {
+  transform: rotate(225deg);            /* 展开：向上箭头 */
+}
+
+.faq-item > *:not(summary) {
+  margin-inline: 20px;
+}
+
+.faq-item > *:not(summary):first-child {
+  margin-top: 0;
+}
+
+.faq-item > *:not(summary):last-child {
+  margin-bottom: 18px;
+}
+
+.faq-item p,
+.faq-item ul {
+  padding: 0;
+  color: var(--secondary);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.faq-item ul {
+  padding-left: 1.25em;
+}
+
+/* --------------------------------------------------------------------------
+   十二、联系区（光束透底 + 白色大卡承载；二维码与联系方式稳定在卡内，MOT-05）
+   -------------------------------------------------------------------------- */
+#contact {
+  /* 不设底色：光束可以透到联系区，由白色大卡保证可读与稳定 */
+}
+
+.contact-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--grid-gap);
+  padding: calc(var(--card-pad) + 8px);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: calc(var(--card-radius) + 8px);
+  box-shadow: var(--card-shadow);
+}
+
+/* 白色大卡内部不再叠卡：去除内层卡的底色与描边 */
+#contact .contact-card {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+#contact .qr-card {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  justify-content: center;
+}
+
+@media (min-width: 1100px) {
+  .contact-wrap {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); /* 两列 */
+    align-items: center;
+  }
+}
+
+.contact-card h2 {
+  margin-bottom: 8px;
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.contact-lede {
+  margin: 0 0 12px;
+  color: var(--secondary);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+@media (min-width: 640px) {
+  .contact-card h2 {
+    font-size: 28px;
+  }
+}
+
+.contact-card .btn {
+  margin-top: 16px;
+}
+
+/* 联系区右侧：simon 信息块 + 二维码并排（原型 v2 布局） */
+.contact-side {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 36px;
+}
+
+.contact-simon {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+
+.simon-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* 头像位图标：浅蓝圆底 + 品牌蓝线条（与方式卡图标同族） */
+.simon-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--primary);
+}
+
+.simon-ico svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* 微信号行：加大字号便于识读 */
+.contact-side .wechat-line {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* 复制按钮 + 提示的行内容器 */
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 0;
+}
+
+/* 二维码卡：白底居中 */
+.qr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.qr-card > * + * {
+  margin-top: 14px;           /* 图与兜底说明之间的间距 */
+}
+
+.qr-img {
+  display: block;
+  width: 160px;           /* 原型 v2 小码，保持原比例 */
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+@media (min-width: 640px) {
+  .qr-img {
+    width: 180px;
+  }
+}
+
+/* 二维码加载失败时的文字联系方法：默认隐藏，图片加载失败时由 JS 加 .show 显示
+   （无 JS 时左侧联系卡的微信号始终可见，不依赖此提示） */
+.qr-fallback {
+  display: none;
+  padding: 12px;
+  background: #FBFDFF;
+  border: 1px dashed var(--card-border);
+  border-radius: 12px;
+  color: var(--secondary);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.qr-fallback.show {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   十三、页脚
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--card-border);
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 32px 40px;
+  font-size: 14px;
+  color: var(--secondary);
+}
+
+.footer-inner a {
+  color: var(--text);
+}
+
+.footer-inner a:hover {
+  color: var(--primary-hover);
+}
+
+/* 教程页页脚未套 .container：补齐同等侧距与列宽 */
+.footer-inner:not(.container) {
+  width: 100%;
+  max-width: calc(var(--container-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* 页脚三段：品牌 + 作者 / 链接 / 版权 */
+.footer-brand {
+  display: grid;
+  gap: 2px;
+}
+
+.footer-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.footer-author {
+  font-size: 13px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 20px;
+  margin: 0;
+  padding: 0;                /* ul 时去默认缩进；p 时无影响 */
+  list-style: none;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;          /* 触控目标 ≥ 44px */
+}
+
+.footer-copy {
+  white-space: nowrap;       /* 版权行不断行 */
+}
+
+/* 手机：页脚纵排；≥640px 恢复 .footer-inner 的横排两端对齐 */
+@media (max-width: 639.98px) {
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   十四、教程页（guide.html）
+   -------------------------------------------------------------------------- */
+.page-hero {
+  background: linear-gradient(180deg, var(--hero-start) 0%, var(--hero-end) 100%);
+  border-bottom: 1px solid #DCEAF8;
+  padding-block: 44px 40px;
+}
+
+@media (min-width: 640px) {
+  .page-hero {
+    padding-block: 56px 48px;
+  }
+}
+
+.page-hero h1 {
+  font-size: 30px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.page-hero p {
+  margin-top: 12px;
+  max-width: 40em;
+  color: var(--secondary);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+@media (min-width: 640px) {
+  .page-hero h1 {
+    font-size: 36px;
+  }
+}
+
+/* 教程主体：<1100px 目录是正文前的普通列表；≥1100px 为 220px 目录 + 760px 正文 */
+.guide-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  padding-block: 40px var(--section-py);
+}
+
+.guide-toc {
+  font-size: 15px;
+}
+
+.guide-toc h2 {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.guide-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.guide-toc a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--secondary);
+  font-size: 15px;
+  text-decoration: none;
+  transition: color var(--speed) ease, background-color var(--speed) ease;
+}
+
+.guide-toc a:hover {
+  background: var(--tint);
+  color: var(--primary-hover);
+}
+
+.guide-body {
+  min-width: 0;
+  max-width: 760px;      /* 正文最大 760px */
+}
+
+@media (min-width: 1100px) {
+  .guide-layout {
+    grid-template-columns: 220px minmax(0, 760px);
+    justify-content: center;   /* 目录 + 正文成组居中 */
+    align-items: start;
+    gap: 56px;
+  }
+
+  /* 粘性目录仅桌面启用；窄屏为普通列表 */
+  .guide-toc {
+    position: sticky;
+    top: calc(var(--nav-h) + 24px);
+  }
+}
+
+/* 教程章节 */
+.guide-chapter + .guide-chapter {
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 1px solid #DCE9F6;
+}
+
+.guide-chapter h2 {
+  margin-bottom: 16px;
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.guide-body h3 {
+  margin: 26px 0 10px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.guide-body h4 {
+  margin: 20px 0 8px;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+@media (min-width: 640px) {
+  .guide-chapter h2 {
+    font-size: 32px;
+  }
+}
+
+/* 提示框（如首次提示语） */
+.callout {
+  margin: 16px 0;
+  padding: 16px 18px;
+  background: var(--tint);
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--primary);
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+/* 章节顶部的一般性说明：次要色小字 + 浅底提示条 */
+.guide-body .note {
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  background: var(--tint);
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--secondary);
+}
+
+/* 可选中复制的干跑提示语块：深蓝底浅字，保留换行 */
+.prompt-block {
+  margin: 12px 0;
+  padding: 16px 18px;
+  background: var(--text);
+  color: #E8F2FC;
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  user-select: text;
+}
+
+.prompt-block code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* 提示语块内部：正文可整段选中 */
+.prompt-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: inherit;
+  user-select: text;
+  overflow-wrap: break-word;
+}
+
+/* 复制按钮 + 提示的行内容器 */
+.prompt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 12px 0 0;
+}
+
+/* 小字注记：深蓝底上的浅色（色板内 #C8DAEB，对比度约 9.5:1） */
+.prompt-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #C8DAEB;
+}
+
+/* 深底块内的复制提示同步改浅色，保证对比度 */
+.prompt-block .copy-hint {
+  color: #C8DAEB;
+}
+
+/* 帮助条目（#help 章节的问题 + 下一步） */
+.help-item {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.help-item + .help-item {
+  margin-top: 12px;
+}
+
+.help-item h3,
+.help-item h4 {
+  margin-bottom: 6px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.help-item p {
+  margin: 0;
+  color: var(--secondary);
+}
+
+/* 帮助章节底部联系块：浅蓝底卡片 */
+.help-contact {
+  margin-top: 24px;
+  padding: 16px 18px;
+  background: var(--contact-bg);
+  border: 1px solid #CDE0F5;
+  border-radius: 14px;
+}
+
+.help-contact p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.help-contact p + p {
+  margin-top: 8px;
+}
+
+.help-contact .prompt-actions {
+  margin-top: 12px;
+}
+
+/* 教程章末“卡住了？”小行 */
+.guide-body .chapter-stuck {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--secondary);
+}
+
+/* 教程页仓库按钮组：覆盖正文段落的下间距 */
+.guide-body .repo-links {
+  margin: 10px 0 2px;
+}
+
+/* --------------------------------------------------------------------------
+   十五、复制控件（仅 JS 增强后出现）
+   -------------------------------------------------------------------------- */
+.copy-button {
+  display: none;          /* 默认隐藏，html.js 下显示 */
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--primary);
+  font-size: 14px;
+}
+
+.copy-button:hover {
+  background: var(--tint);
+  border-color: var(--primary);
+}
+
+.js .copy-button {
+  display: inline-flex;
+}
+
+/* 复制成功提示：默认隐藏，.show 时显示（内容由 aria-live 播报） */
+.copy-hint {
+  display: none;
+  font-size: 14px;
+  color: var(--st-ready-tx);
+  line-height: 1.6;
+}
+
+.copy-hint.show {
+  display: inline-block;
+}
+
+/* --------------------------------------------------------------------------
+   十六、收尾：容器末元素去尾距
+   -------------------------------------------------------------------------- */
+.guide-body > :last-child,
+.guide-chapter > :last-child,
+.demo-panel > :last-child,
+.callout > :last-child,
+.contact-card > :last-child,
+.qr-card > :last-child,
+.help-item > :last-child,
+.demand-card > :last-child {
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   十七、减少动态偏好：关闭所有过渡 / 动画与平滑滚动
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

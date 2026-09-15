@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dshjob.com 站点地图：仅首页与教程页；404 兜底页不计入（design 第 7 节） -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://dshjob.com/</loc>
+    <lastmod>2026-09-15</lastmod>
+  </url>
+  <url>
+    <loc>https://dshjob.com/guide</loc>
+    <lastmod>2026-09-15</lastmod>
+  </url>
+</urlset>
