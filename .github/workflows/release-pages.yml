@@ -123,7 +123,7 @@ jobs:
           set -euo pipefail
           curl -fsS -H "Authorization: Bearer $CF_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects" \
-            | grep -q '"name":"dshjob"' \
+            | grep -Eq '"name":[[:space:]]*"dshjob"' \
             || { echo "::error::账号下未找到 Pages 项目 dshjob，拒绝发布"; exit 1; }
           echo "归属核对通过：Pages 项目 dshjob 存在。"
 
