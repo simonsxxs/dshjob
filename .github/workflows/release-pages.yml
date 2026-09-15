@@ -18,6 +18,9 @@
 #      绝不回显内容；
 #   6. 记录获批 SHA、Actions run、部署 URL，正式域名另行人工核对。
 #
+# 2026-09-15 修复：wrangler-action 的 command 不经 shell 解释，管道与 && 会被
+# 当作 wrangler 参数导致发布失败；归属核对改为独立步骤走 Cloudflare API。
+#
 # Gitee 同步与安装包上传是另外的明确动作，不在本工作流内。
 # ============================================================================
 
@@ -110,15 +113,27 @@ jobs:
       # wrangler-action 版本在实施时（2026-09-15）固定为 v3 大版本标签；
       # 升级必须重新审阅整条发布链路，不允许随构建自动漂移。
       # 仅使用两个指定 Secrets，任何日志不得输出其内容。
-      # 命令先列出账号下的 Pages 项目并确认存在 dshjob（归属核对），
-      # 核对不通过时 && 短路，部署不会执行（fail-closed）。
-      - name: 7/8 核对 Pages 项目归属并上传
+      # 归属核对走 Cloudflare API（fail-closed：账号下不存在 Pages 项目 dshjob
+      # 即失败），上传命令本身不含管道 / &&，避免 wrangler-action 传参歧义。
+      - name: 7/8 核对 Pages 项目归属（fail-closed）
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          curl -fsS -H "Authorization: Bearer $CF_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects" \
+            | grep -q '"name":"dshjob"' \
+            || { echo "::error::账号下未找到 Pages 项目 dshjob，拒绝发布"; exit 1; }
+          echo "归属核对通过：Pages 项目 dshjob 存在。"
+
+      - name: 7b/8 上传站点到 Cloudflare Pages
         id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages project list | grep -q dshjob && wrangler pages deploy site-staging --project-name=dshjob --branch=main
+          command: pages deploy site-staging --project-name=dshjob --branch=main
 
       - name: 8/8 记录发布结果
         id: publish-meta
