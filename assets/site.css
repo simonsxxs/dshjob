@@ -1079,6 +1079,23 @@ a:hover {
   text-underline-offset: 4px;
 }
 
+/* 开发中方式的教程入口：外观与可点版本一致，但不可跳转 */
+.tut-link-off {
+  cursor: default;
+}
+
+.tut-link-off:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.tut-note {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--secondary);
+}
+
 /* 步骤编号：品牌蓝描边圆徽（原型 v2 的 01–04 圆形序号） */
 .step .step-num {
   display: inline-flex;
