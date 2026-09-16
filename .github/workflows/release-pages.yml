@@ -121,9 +121,11 @@ jobs:
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          curl -fsS -H "Authorization: Bearer $CF_API_TOKEN" \
-            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects" \
-            | grep -Eq '"name":[[:space:]]*"dshjob"' \
+          # 先取完整响应再本地匹配：grep -q 会提前关闭管道导致 curl 误报
+          # 写入失败（exit 23），响应体增大后必然触发，故不在同一管道内匹配
+          projects="$(curl -fsS -H "Authorization: Bearer $CF_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects")"
+          printf '%s' "$projects" | grep -Eq '"name":[[:space:]]*"dshjob"' \
             || { echo "::error::账号下未找到 Pages 项目 dshjob，拒绝发布"; exit 1; }
           echo "归属核对通过：Pages 项目 dshjob 存在。"
 
