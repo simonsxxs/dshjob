@@ -83,9 +83,9 @@ REPO_ALLOWED = (
 )
 RELEASE_SUBPATH = "/releases"
 
-# 关联站点白名单：页脚「关联链接」中可点击站点的根路径，仅允许 https
-# 2026-09-16 按用户要求：dshgeo / opcmode 尚未上线，改为纯文本展示，只保留 dshopc.com 可点击
-SITE_ALLOWED = ("dshopc.com",)
+# 关联站点白名单：页脚「关联链接」指向的同人生态站点，仅允许 https 根路径
+# 2026-09-16 按用户要求加入（dshopc / dshgeo / opcmode）
+SITE_ALLOWED = ("dshopc.com", "dshgeo.com", "opcmode.com")
 
 # link rel=canonical 的自引用只允许正式域名的两种写法（design 第 1 节）
 CANONICAL_ALLOWED = ("https://dshjob.com/", "https://dshjob.com/guide")
@@ -435,7 +435,7 @@ class SiteChecker:
             "不在外链白名单（仅允许 github.com/simonsxxs/dshjob、"
             "gitee.com/simonsxx/dshjob、github.com/simonsxxs/dshjob-skills、"
             "gitee.com/simonsxx/dshjob-skills 及以上仓库的 /releases 子路径，"
-            "或关联站点 dshopc.com 的根路径）"
+            "或关联站点 dshopc.com / dshgeo.com / opcmode.com 的根路径）"
         )
 
     def _check_one_url(self, page_rel: str, tag: str, attr: str,

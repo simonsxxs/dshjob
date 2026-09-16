@@ -1809,26 +1809,6 @@ html:not(.js) .demo-tab {
   min-height: 44px;          /* 触控目标 ≥ 44px */
 }
 
-/* 未上线站点：外观与相邻链接一致（正文色 + 同款下划线），但不可点击 */
-.footer-link-off {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: rgba(37, 99, 235, 0.35);
-  text-underline-offset: 3px;
-  cursor: default;
-}
-
-.footer-links-note {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-size: 13px;
-  color: var(--secondary);
-}
-
 .footer-copy {
   white-space: nowrap;       /* 版权行不断行 */
 }
