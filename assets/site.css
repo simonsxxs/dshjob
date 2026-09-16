@@ -1079,17 +1079,17 @@ a:hover {
   text-underline-offset: 4px;
 }
 
-/* 开发中方式的教程入口：外观与可点版本一致，但不可跳转 */
-.tut-link-off {
+/* 开发中方式的仓库按钮：外观与可点版本一致（含悬停态），但不可跳转 */
+.repo-btn-off {
   cursor: default;
 }
 
-.tut-link-off:hover {
-  color: var(--primary);
-  text-decoration: none;
+.repo-btn-off:hover {
+  border-color: var(--card-border);
+  color: var(--text);
 }
 
-.tut-note {
+.card-note {
   display: inline-flex;
   align-items: center;
   font-size: 13px;
