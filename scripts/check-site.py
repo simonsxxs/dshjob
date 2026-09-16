@@ -83,6 +83,10 @@ REPO_ALLOWED = (
 )
 RELEASE_SUBPATH = "/releases"
 
+# 关联站点白名单：页脚「关联链接」指向的同人生态站点，仅允许 https 根路径
+# 2026-09-16 按用户要求加入（dshopc / dshgeo / opcmode）
+SITE_ALLOWED = ("dshopc.com", "dshgeo.com", "opcmode.com")
+
 # link rel=canonical 的自引用只允许正式域名的两种写法（design 第 1 节）
 CANONICAL_ALLOWED = ("https://dshjob.com/", "https://dshjob.com/guide")
 
@@ -415,6 +419,9 @@ class SiteChecker:
         if host == "example.com" or host.endswith(".example.com"):
             return False, "", "不允许使用 example.com 占位链接"
         path = parts.path or ""
+        # 关联站点：仅允许根路径（https://<域名>/），不带更深子路径
+        if host in SITE_ALLOWED and path in ("", "/"):
+            return True, "site-root", ""
         for repo in REPO_ALLOWED:
             repo_host, _, repo_path = repo.partition("/")
             if host != repo_host:
@@ -427,7 +434,8 @@ class SiteChecker:
         return False, "", (
             "不在外链白名单（仅允许 github.com/simonsxxs/dshjob、"
             "gitee.com/simonsxx/dshjob、github.com/simonsxxs/dshjob-skills、"
-            "gitee.com/simonsxx/dshjob-skills 及以上仓库的 /releases 子路径）"
+            "gitee.com/simonsxx/dshjob-skills 及以上仓库的 /releases 子路径，"
+            "或关联站点 dshopc.com / dshgeo.com / opcmode.com 的根路径）"
         )
 
     def _check_one_url(self, page_rel: str, tag: str, attr: str,
