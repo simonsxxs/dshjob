@@ -73,12 +73,13 @@ dshjob/
 
 ## 部署
 
-按用户要求参考 dshopc 的路线：**GitHub Actions 人工发布 → Cloudflare Pages Direct Upload → dshjob.com**。网页维持纯静态，无前端构建步骤。发布只上传明确的站点文件，不上传整个仓库；配置范围见 Spec 的设计文档，当前未创建发布工作流。
+按用户要求参考 dshopc 的路线：**GitHub Actions 人工发布 → Cloudflare Pages Direct Upload → dshjob.com**。网页维持纯静态，无前端构建步骤。发布只上传明确的站点文件，不上传整个仓库。
 
 - GitHub：[simonsxxs/dshjob](https://github.com/simonsxxs/dshjob)
 - Gitee：[simonsxx/dshjob](https://gitee.com/simonsxx/dshjob)
+- 线上地址：[dshjob.com](https://dshjob.com)（`www` 与 HTTP 均 301 跳主域）
 
-2026-09-14 核验两端 HEAD 一致，远程内容仍为官网占位页；实际求职工具下载物待补齐。当前未创建发布工作流、未配置托管或域名，未推送本轮文档或发布网站。
+2026-09-16 完成首次发布上线：域名 DNS 由阿里云切换至 Cloudflare（与 dshopc 同款托管路线，国内可直连），`release-pages.yml` 人工触发、白名单打包、直传 Pages 项目 `dshjob`；Gitee 镜像同步公开。此后每次发布仍需单独的发布授权，按工作流内说明执行。
 
 ---
 
